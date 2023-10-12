@@ -1,0 +1,123 @@
+[
+    {
+      "id": 1,
+      "task": "Закончить проект по информатике",
+      "completed": false,
+      "createdDate": "2023-10-11",
+      "changeDate": null,
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "task": "Купить продукты в магазине",
+      "completed": false,
+      "createdDate": "2023-10-11",
+      "changeDate": null,
+      "priority": "medium"
+    },
+    {
+      "id": 3,
+      "task": "Прочитать новую книгу",
+      "completed": true,
+      "createdDate": "2023-10-10",
+      "changeDate": "2023-10-11",
+      "priority": "low"
+    },
+    {
+      "id": 4,
+      "task": "Сделать зарядку",
+      "completed": false,
+      "createdDate": "2023-10-10",
+      "changeDate": null,
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "task": "Позвонить в банк",
+      "completed": false,
+      "createdDate": "2023-10-09",
+      "changeDate": null,
+      "priority": "medium"
+    },
+    {
+      "id": 6,
+      "task": "Подготовить презентацию",
+      "completed": true,
+      "createdDate": "2023-10-09",
+      "changeDate": "2023-10-10",
+      "priority": "high"
+    },
+    {
+      "id": 7,
+      "task": "Сходить на тренировку",
+      "completed": false,
+      "createdDate": "2023-10-08",
+      "changeDate": null,
+      "priority": "medium"
+    },
+    {
+      "id": 8,
+      "task": "Почистить зубы",
+      "completed": true,
+      "createdDate": "2023-10-08",
+      "changeDate": "2023-10-10",
+      "priority": "low"
+    },
+    {
+      "id": 9,
+      "task": "Написать письмо другу",
+      "completed": false,
+      "createdDate": "2023-10-07",
+      "changeDate": null,
+      "priority": "high"
+    },
+    {
+      "id": 10,
+      "task": "Провести собрание",
+      "completed": false,
+      "createdDate": "2023-10-07",
+      "changeDate": null,
+      "priority": "medium"
+    },
+    {
+      "id": 11,
+      "task": "Убраться в комнате",
+      "completed": false,
+      "createdDate": "2023-10-06",
+      "changeDate": null,
+      "priority": "low"
+    },
+    {
+      "id": 12,
+      "task": "Подготовить ужин",
+      "completed": true,
+      "createdDate": "2023-10-06",
+      "changeDate": "2023-10-07",
+      "priority": "high"
+    },
+    {
+      "id": 13,
+      "task": "Проверить почту",
+      "completed": false,
+      "createdDate": "2023-10-05",
+      "changeDate": null,
+      "priority": "medium"
+    },
+    {
+      "id": 14,
+      "task": "Приготовить завтрак",
+      "completed": false,
+      "createdDate": "2023-10-05",
+      "changeDate": null,
+      "priority": "low"
+    },
+    {
+      "id": 15,
+      "task": "Заправить машину",
+      "completed": true,
+      "createdDate": "2023-10-04",
+      "changeDate": "2023-10-06",
+      "priority": "high"
+    }
+  ]
+  
