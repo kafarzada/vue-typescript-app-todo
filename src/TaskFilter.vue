@@ -1,8 +1,8 @@
 <template>
-    <label for="filterTask">Фильтр:
+    <label :for="id">Фильтр:
         <input type="text"
-               name=""
-               id="filterTask"
+               name="filter"
+               :id="id"
                :value='value'
                 @input='inputVal'
                >
@@ -14,11 +14,13 @@ import {
 } from 'vue';
 
 defineProps<{
-    value: string
+    value: string,
+    id: string,
 }>();
 
 const emit = defineEmits(['update:value']);
 function inputVal(event: Event) {
+    console.log('sd');
     emit('update:value', (event.target as HTMLInputElement).value);
 }
 </script>

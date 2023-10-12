@@ -11,7 +11,7 @@ function initStorage() {
         return `Task ${taskNumber}`;
     };
     const generateRandomID = () => {
-        const idNumber = Math.floor(Math.random() * 1000);
+        const idNumber = String(Math.floor(Math.random() * 1000));
         return `ID-${idNumber}`;
     };
     const db: Array<ITask> = [];

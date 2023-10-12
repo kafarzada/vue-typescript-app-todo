@@ -1,37 +1,53 @@
 <template>
+    <TaskFilter v-model:value="filterValue" />
     <div class='todo'>
         <div>
             <h3>Новые Задачи:</h3>
-            <TaskList :tasks='holdTasks'/>
+            <TaskList :tasks='OnHoldTasks' />
         </div>
         <div>
             <h3>Выполняются:</h3>
-            <TaskList :tasks='tasksInProcess' />
+            <TaskList :tasks='InProgressTasks' />
         </div>
         <div>
             <h3>Выполнены:</h3>
-            <TaskList :tasks='completedTasks' />
+            <TaskList :tasks='CompletedYasks' />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import {
+    onMounted, ref, watch,
+} from 'vue';
 import type { Ref } from 'vue';
 import storage from './api/client';
 import { ITask } from './types/types';
 import TaskList from './TaskList.vue';
+import TaskFilter from './TaskFilter.vue';
 
-const tasks: Ref<Array<ITask>> = ref([]);
+const tasks: Ref<ITask[]> = ref([]);
+const OnHoldTasks: Ref<ITask[]> = ref([]);
+const InProgressTasks: Ref<ITask[]> = ref([]);
+const CompletedYasks: Ref<ITask[]> = ref([]);
+
+const filterValue: Ref<string> = ref('');
 
 onMounted(() => {
     tasks.value = storage.getAllTasks();
+    OnHoldTasks.value = tasks.value.filter((task) => task.status === 'On Hold');
+    InProgressTasks.value = tasks.value.filter((task) => task.status === 'In Progress');
+    CompletedYasks.value = tasks.value.filter((task) => task.status === 'Completed');
 });
 
-const holdTasks = computed(() => tasks.value.filter((task) => task.status === 'On Hold'));
-const tasksInProcess = computed(() => tasks.value.filter((task) => task.status === 'In Progress'));
-const completedTasks = computed(() => tasks.value.filter((task) => task.status === 'Completed'));
-
+watch(filterValue, (newVal) => {
+    OnHoldTasks.value = tasks.value.filter((task) => task.task.toLowerCase()
+        .includes(newVal.toLowerCase()) && task.status === 'On Hold');
+    InProgressTasks.value = tasks.value.filter((task) => task.task.toLowerCase()
+        .includes(newVal.toLowerCase()) && task.status === 'In Progress');
+    CompletedYasks.value = tasks.value.filter((task) => task.task.toLowerCase()
+        .includes(newVal.toLowerCase()) && task.status === 'Completed');
+})
 </script>
 
 <style>

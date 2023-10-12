@@ -1,6 +1,7 @@
 <template>
     <li class='task'
         draggable='true'
+        @dragstart="dragStart(task.id)"
         :key='task.id'>
         <p>{{ task.task }}</p>
         <span class='priority'
@@ -9,12 +10,20 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import { ITask } from './types/types';
 
 defineProps<{
     task: ITask
 }>();
+
+const emit = defineEmits({
+    dragStrat: null,
+})
+
+function dragStart(id: string) {
+    emit('dragStrat', id);
+}
 </script>
 <style>
 .task {

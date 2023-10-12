@@ -53,6 +53,8 @@
         4
       ],
       "semi": "warn",
+      "no-debugger": "off",
+      "max-len": ["error", { "code": 100 }],
       "@typescript-eslint/ban-types": "error",
       "no-param-reassign": [
         "warn",
