@@ -12,7 +12,7 @@ import { defineProps, ref } from 'vue';
 import type { Ref } from 'vue';
 import { ITask } from './types/types';
 import TaskItem from './TaskItem.vue';
-import TaskFilter from './TaskFilter.vue'
+import TaskFilter from './TaskFilter.vue';
 
 const filterValue: Ref<string> = ref('');
 
