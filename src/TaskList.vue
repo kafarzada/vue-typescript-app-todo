@@ -20,11 +20,11 @@ import type { Ref } from 'vue';
 
 const props = defineProps<{
     listStatus: string
-}>()
+}>();
 const borderstyle: Ref<boolean> = ref(false);
 const emit = defineEmits({
     dropHandler: null,
-})
+});
 function dropHandler(): void {
     emit('dropHandler', props.listStatus);
     borderstyle.value = false;
