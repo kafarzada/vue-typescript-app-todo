@@ -1,9 +1,13 @@
+export type Status = 'On Hold' | 'In Progress' | 'Pending' | 'Completed'
+export type Priority = 'Low' | 'Medium' | 'High'
+
 export interface ITask {
     id: string,
     task: string,
     completed: boolean,
-    createdDate: Date,
-    changeDate: Date,
-    status: string,
-    priority: string,
+    createdDate: number,
+    compeletedDate?: number,
+    changeDate?: number,
+    status: Status,
+    priority: Priority,
 }

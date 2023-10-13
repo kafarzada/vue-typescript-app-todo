@@ -1,12 +1,19 @@
 <template>
-    <li class='task'
-        draggable='true'
+    <div
+        class='task'
+        :class="{cursorPointer: !task.completed}"
+        :draggable='task.completed ? false : true'
         @dragstart="dragStart(task.id)"
+        @dragenter.stop
         :key='task.id'>
         <p>{{ task.task }}</p>
         <span class='priority'
               :class=[task.priority]>{{ task.priority }}</span>
-    </li>
+        <p class="date-text">Дата создание:
+                {{ new Date(task.createdDate).toLocaleDateString() }}</p>
+        <p v-if="task.compeletedDate !== undefined" class="date-text">Дата выполнения:
+                {{ new Date(task.compeletedDate).toLocaleDateString() }}</p>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -18,22 +25,28 @@ defineProps<{
 }>();
 
 const emit = defineEmits({
-    dragStrat: null,
-})
+    dragStart: null,
+});
 
 function dragStart(id: string) {
-    emit('dragStrat', id);
+    emit('dragStart', id);
 }
 </script>
 <style>
 .task {
     width: 300px;
-    border: 1px solid rgb(146, 146, 146);
+    margin: 15px auto;
     padding: 15px;
+    border: none;
     min-height: 90px;
     margin-bottom: 15px;
+    border-radius: 15px;
+    background-color: white;
+    user-select: none;
+}
+
+.cursorPointer {
     cursor: pointer;
-    border-radius: 10px;
 }
 
 .priority {
@@ -58,4 +71,11 @@ function dragStart(id: string) {
     background-color: red;
     color: white;
 }
+
+.date-text {
+    font-style: italic;
+    color: rgb(174, 174, 174);
+    font-size: 12px;
+}
+
 </style>

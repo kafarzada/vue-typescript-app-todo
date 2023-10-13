@@ -1,41 +1,40 @@
 <template>
-    <ul class='task-list'
+    <div class='task-list'
+        :class="{borderIsActive : borderstyle}"
         @dragover.prevent
         @drop='dropHandler'
         @dragenter='dragEnterHandler'
-        @dragexit='dragExitHandler'>
-        <TaskItem v-for='task in props.tasks'
-                  :key='task.id'
-                  :task='task' />
-    </ul>
+        @dragleave='dragLeaveHandler'>
+        <slot name="title"></slot>
+        <slot></slot>
+</div>
 </template>
 
 <script lang='ts' setup>
 import {
-    defineProps, ref, defineEmits,
+    ref,
+    defineEmits,
+    defineProps,
 } from 'vue';
 import type { Ref } from 'vue';
-import { ITask } from './types/types';
-import TaskItem from './TaskItem.vue';
 
 const props = defineProps<{
-    tasks: ITask[]
-}>();
+    listStatus: string
+}>()
 const borderstyle: Ref<boolean> = ref(false);
-
 const emit = defineEmits({
-    filterValue: null,
-});
-
+    dropHandler: null,
+})
 function dropHandler(): void {
-    // alert('drop');
+    emit('dropHandler', props.listStatus);
+    borderstyle.value = false;
 }
 
 function dragEnterHandler(): void {
     borderstyle.value = true;
 }
 
-function dragExitHandler(): void {
+function dragLeaveHandler(): void {
     borderstyle.value = false;
 }
 
@@ -44,9 +43,17 @@ function dragExitHandler(): void {
 <style>
 .task-list {
     list-style: none;
+    padding: 15px;
+    border: 1px solid transparent;
+    flex-basis: 33%;
+    padding-bottom: 200px;
+    background-color: rgba(0, 0, 0, 0.047);
+    margin: 20px;
+    border-radius: 15px;
 }
 
 .borderIsActive {
     border: 1px dotted rgba(0, 0, 0, 0.432);
+    background-color: rgba(99, 234, 255, 0.066);
 }
 </style>

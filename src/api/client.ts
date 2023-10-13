@@ -1,40 +1,30 @@
-import { ITask } from '../types/types';
+import { ITask, Status, Priority } from '../types/types';
 
 function initStorage() {
-    function generateRandomDate(start: Date, end: Date): Date {
-        return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    }
-    const statusOptions: string[] = ['Pending', 'In Progress', 'Completed', 'On Hold'];
-    const priorityOptions: string[] = ['High', 'Medium', 'Low'];
-    const generateRandomTask = () => {
-        const taskNumber = Math.floor(Math.random() * 1000);
-        return `Task ${taskNumber}`;
-    };
-    const generateRandomID = () => {
-        const idNumber = String(Math.floor(Math.random() * 1000));
-        return `ID-${idNumber}`;
-    };
-    const db: Array<ITask> = [];
-    for (let i = 1; i <= 20; i += 1) {
-        const id = generateRandomID();
-        const task = generateRandomTask();
-        const createdDate = generateRandomDate(new Date(2023, 0, 1), new Date());
-        const changeDate = generateRandomDate(createdDate, new Date());
-        const status = statusOptions[Math.floor(Math.random() * statusOptions.length)];
-        const priority = priorityOptions[Math.floor(Math.random() * priorityOptions.length)];
-        const dataObject: ITask = {
-            id,
-            task,
-            createdDate,
-            changeDate,
-            status,
+    let db: Array<ITask> = [
+        {
+            id: '1',
+            task: 'task 1',
             completed: false,
-            priority,
-        };
-        db.push(dataObject);
-    }
-    function getAllTasks(): Array<ITask> {
-        return db ?? [];
+            createdDate: Date.now(),
+            priority: 'High',
+            status: 'On Hold',
+        },
+        {
+            id: '2',
+            task: 'task 2',
+            completed: false,
+            createdDate: Date.now(),
+            priority: 'Low',
+            status: 'In Progress',
+        },
+    ];
+    function getAllTasks(): Array<Array<ITask>> {
+        return [
+            [...db.filter((task) => task.status === 'Completed')],
+            [...db.filter((task) => task.status === 'In Progress')],
+            [...db.filter((task) => task.status === 'On Hold')],
+        ];
     }
     function getTaskById(id: string): ITask {
         const findTask = db.find((task) => task.task === id);
@@ -52,10 +42,52 @@ function initStorage() {
         throw Error('Error: Нет такой задачи');
     }
 
+    function forwardTask(taskId: string, list: Status): ITask[][] {
+        let result;
+        db = db.map((task) => {
+            if (task.id === taskId) {
+                task.status = list;
+
+                if (list === 'Completed') {
+                    task.completed = true;
+                    task.compeletedDate = Date.now();
+                }
+                result = task;
+            }
+
+            return task;
+        });
+
+        if (result) {
+            return [
+                [...db.filter((task) => task.status === 'Completed')],
+                [...db.filter((task) => task.status === 'In Progress')],
+                [...db.filter((task) => task.status === 'On Hold')],
+            ];
+        }
+        throw Error('Задача не найдена');
+    }
+
+    function createNewTask(newObj: { task: string, priority: Priority }) {
+        const newTask: ITask = {
+            id: String(Math.random()),
+            task: newObj.task,
+            completed: false,
+            priority: newObj.priority,
+            status: 'On Hold',
+            createdDate: Date.now(),
+        };
+
+        db.push(newTask);
+        return newTask;
+    }
+
     return {
         changeTask,
         getTaskById,
         getAllTasks,
+        forwardTask,
+        createNewTask,
     };
 }
 

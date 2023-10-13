@@ -1,53 +1,120 @@
 <template>
-    <TaskFilter v-model:value="filterValue" />
+    <div>
+        <label for="new-task">Новая Задача
+            <input type="text" name="new-task" id="new-task" v-model="newTaskvalue">
+        </label>
+        <label for="select-priority">
+            <select name="priority" id="select-priority" v-model="priorityOfNewTask">
+                <option value=''></option>
+                <option value="Low">Low</option>
+                <option value='Medium'>Medium</option>
+                <option value='High'>High</option>
+            </select>
+        </label>
+        <button @click="addNewTask">Новая Задача</button>
+    </div>
+    <TaskFilter v-model:value="filterValue" id="filter" />
     <div class='todo'>
-        <div>
-            <h3>Новые Задачи:</h3>
-            <TaskList :tasks='OnHoldTasks' />
-        </div>
-        <div>
-            <h3>Выполняются:</h3>
-            <TaskList :tasks='InProgressTasks' />
-        </div>
-        <div>
-            <h3>Выполнены:</h3>
-            <TaskList :tasks='CompletedYasks' />
-        </div>
+        <TaskList
+            @drop-handler="drapHadler"
+            listStatus="On Hold"
+        >
+            <template #title><h3 class="title">Новые Задачи:</h3></template>
+            <TaskItem
+            v-for='task in onHoldList'
+            :key='task.id'
+            :task='task'
+            @drag-start="dragStart"/>
+        </TaskList>
+        <TaskList
+            @drop-handler="drapHadler"
+            listStatus="In Progress">
+            <template #title><h3 class="title">Выполняются:</h3></template>
+            <TaskItem
+            v-for='task in progressList'
+            :key='task.id'
+            :task='task'
+            @drag-start="dragStart"
+            />
+        </TaskList>
+        <TaskList
+            @drop-handler="drapHadler"
+            listStatus="Completed">
+            <template #title><h3 class="title">Выполнены</h3></template>
+            <TaskItem
+                v-for='task in completedTask'
+                :key='task.id'
+                :task='task'
+                @drag-start="dragStart"/>
+        </TaskList>
     </div>
 </template>
 
 <script setup lang="ts">
 import {
-    onMounted, ref, watch,
+    onMounted, ref, watch, computed,
 } from 'vue';
 import type { Ref } from 'vue';
 import storage from './api/client';
-import { ITask } from './types/types';
+import { ITask, Status, Priority } from './types/types';
 import TaskList from './TaskList.vue';
 import TaskFilter from './TaskFilter.vue';
+import TaskItem from './TaskItem.vue';
 
-const tasks: Ref<ITask[]> = ref([]);
+const tasks: Ref<ITask[][]> = ref([]);
 const OnHoldTasks: Ref<ITask[]> = ref([]);
 const InProgressTasks: Ref<ITask[]> = ref([]);
-const CompletedYasks: Ref<ITask[]> = ref([]);
+const CompletedTasks: Ref<ITask[]> = ref([]);
+const dragTaskId: Ref<string> = ref('');
 
 const filterValue: Ref<string> = ref('');
+const newTaskvalue: Ref<string> = ref('');
+const priorityOfNewTask: Ref<Priority> = ref('Low');
 
 onMounted(() => {
     tasks.value = storage.getAllTasks();
-    OnHoldTasks.value = tasks.value.filter((task) => task.status === 'On Hold');
-    InProgressTasks.value = tasks.value.filter((task) => task.status === 'In Progress');
-    CompletedYasks.value = tasks.value.filter((task) => task.status === 'Completed');
+    [CompletedTasks.value, InProgressTasks.value, OnHoldTasks.value] = tasks.value;
 });
 
-watch(filterValue, (newVal) => {
-    OnHoldTasks.value = tasks.value.filter((task) => task.task.toLowerCase()
-        .includes(newVal.toLowerCase()) && task.status === 'On Hold');
-    InProgressTasks.value = tasks.value.filter((task) => task.task.toLowerCase()
-        .includes(newVal.toLowerCase()) && task.status === 'In Progress');
-    CompletedYasks.value = tasks.value.filter((task) => task.task.toLowerCase()
-        .includes(newVal.toLowerCase()) && task.status === 'Completed');
-})
+const onHoldList = computed(() => OnHoldTasks.value);
+const progressList = computed(() => InProgressTasks.value);
+const completedTask = computed(() => CompletedTasks.value);
+
+watch(tasks, () => {
+    [CompletedTasks.value, InProgressTasks.value, OnHoldTasks.value] = tasks.value;
+});
+
+watch(filterValue, () => {
+    if (!filterValue.value) {
+        [CompletedTasks.value, InProgressTasks.value, OnHoldTasks.value] = tasks.value;
+    }
+    OnHoldTasks.value = tasks
+        .value[2]?.filter((task) => task.task.toLowerCase().includes(filterValue.value));
+    InProgressTasks.value = tasks
+        .value[1]?.filter((task) => task.task.toLowerCase().includes(filterValue.value));
+    CompletedTasks.value = tasks
+        .value[3]?.filter((task) => task.task.toLowerCase().includes(filterValue.value));
+});
+
+function addNewTask() {
+    const newTask = storage.createNewTask({
+        task: newTaskvalue.value,
+        priority: priorityOfNewTask.value,
+    });
+
+    if (newTask) {
+        tasks.value[2].push(newTask);
+        tasks.value = [...tasks.value];
+    }
+}
+
+function dragStart(id: string) {
+    dragTaskId.value = id;
+}
+
+function drapHadler(listStatus: Status) {
+    tasks.value = storage.forwardTask(dragTaskId.value, listStatus);
+}
 </script>
 
 <style>
@@ -66,16 +133,6 @@ watch(filterValue, (newVal) => {
 
 .task-list {
     list-style: none;
-}
-
-.task {
-    width: 300px;
-    border: 1px solid rgb(146, 146, 146);
-    padding: 15px;
-    min-height: 90px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    border-radius: 10px;
 }
 
 .priority {
@@ -99,5 +156,9 @@ watch(filterValue, (newVal) => {
 .High {
     background-color: red;
     color: white;
+}
+
+.title {
+    text-align: center;
 }
 </style>
